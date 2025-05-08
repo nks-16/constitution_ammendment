@@ -13,10 +13,9 @@ const app = express();
 
 // Restrict CORS to specific frontend domain
 app.use(cors({
-  origin: ['https://constitution-ammendment.vercel.app', 'http://localhost:3000'],
+  origin: 'http://localhost:3000',
   credentials: true,
 }));
-
 
 app.use(express.json());
 
