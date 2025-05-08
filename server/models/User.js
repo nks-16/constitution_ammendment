@@ -7,18 +7,15 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   sessionToken: { type: String, default: null },
   isAdmin: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  votes: [
+    {
+      amendmentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Amendment',
+        required: true
+      },
+      hasVoted: { type: Boolean, default: false }
+    }
+  ]
 });
-
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
-
-userSchema.methods.matchPassword = async function (password) {
-  return await bcrypt.compare(password, this.password);
-};
-
-module.exports = mongoose.model('User', userSchema);

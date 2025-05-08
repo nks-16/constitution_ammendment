@@ -218,3 +218,80 @@ exports.deleteVote = async (req, res) => {
     });
   }
 };
+
+exports.markUserAsVoted = async (req, res) => {
+  const { amendmentId } = req.params;
+
+  try {
+    // Validate amendmentId
+    if (!mongoose.Types.ObjectId.isValid(amendmentId)) {
+      return res.status(400).json({ message: 'Invalid amendment ID' });
+    }
+
+    // Check if amendment exists
+    const amendment = await Amendment.findById(amendmentId);
+    if (!amendment) {
+      return res.status(404).json({ message: 'Amendment not found' });
+    }
+
+    // Find the vote record for the user and this amendment
+    const existingVote = await Vote.findOne({
+      user: req.user._id,
+      amendment: amendmentId
+    });
+
+    // Check if the user has already voted
+    if (!existingVote) {
+      return res.status(400).json({ message: 'User has not voted on this amendment yet' });
+    }
+
+    // Update the `hasVoted` status to true for this user and amendment
+    const userVoteStatus = await User.findOneAndUpdate(
+      { _id: req.user._id, 'votes.amendmentId': amendmentId },
+      { $set: { 'votes.$.hasVoted': true } },
+      { new: true } // return the updated user document
+    );
+
+    if (!userVoteStatus) {
+      return res.status(400).json({ message: 'Failed to mark user as voted' });
+    }
+
+    res.status(200).json({ 
+      message: 'User vote status updated successfully',
+      hasVoted: true
+    });
+
+  } catch (err) {
+    console.error('Error marking user as voted:', err);
+    res.status(500).json({
+      message: 'Failed to update vote status',
+      error: err.message
+    });
+  }
+};
+
+exports.hasUserVoted = async (req, res) => {
+  const { amendmentId } = req.params;
+
+  try {
+    const existingVote = await Vote.findOne({
+      user: req.user._id,
+      amendment: amendmentId
+    });
+
+    res.json({
+      hasVoted: !!existingVote,
+      vote: existingVote ? {
+        choice: existingVote.choice,
+        voteId: existingVote._id,
+        votedAt: existingVote.createdAt
+      } : null
+    });
+
+  } catch (err) {
+    res.status(500).json({ 
+      message: 'Error checking vote status',
+      error: err.message 
+    });
+  }
+};

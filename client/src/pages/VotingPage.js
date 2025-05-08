@@ -16,6 +16,47 @@ const VotingPage = () => {
   const navigate = useNavigate();
   const { sessionToken, setSessionToken, userData } = useAuth();
 
+
+  const fetchVoteStatuses = async (amendments) => {
+    try {
+      const updatedAmendments = await Promise.all(
+        amendments.map(async (amendment) => {
+          const res = await axios.get(
+            `https://constitution-ammendment-2p01.onrender.com/api/v1/vote/${amendment._id}/has-voted`,
+            { headers: { Authorization: sessionToken } }
+          );
+  
+          return {
+            ...amendment,
+            voted: res.data.hasVoted,
+            voteInfo: res.data.vote, // optional, in case you want to show choice later
+          };
+        })
+      );
+  
+      setAmendments(updatedAmendments);
+    } catch (error) {
+      console.error('Failed to fetch vote statuses', error);
+    }
+  };
+  useEffect(() => {
+    const fetchAmendments = async () => {
+      try {
+        const res = await axios.get(
+          `https://constitution-ammendment-2p01.onrender.com/api/v1/amendments`,
+          { headers: { Authorization: sessionToken } }
+        );
+  
+        const amendments = res.data.amendments;
+        await fetchVoteStatuses(amendments);
+      } catch (error) {
+        console.error('Failed to fetch amendments', error);
+      }
+    };
+  
+    fetchAmendments();
+  }, []);
+    
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -64,7 +105,25 @@ const VotingPage = () => {
     setSelectedAmendment(null);
     setChoice('');
   };
-
+  const handleVoteSubmit = async (amendmentId, choice) => {
+    try {
+      await axios.post(
+        `https://constitution-ammendment-2p01.onrender.com/api/v1/vote`,
+        { amendmentId, choice },
+        { headers: { Authorization: sessionToken } }
+      );
+  
+      await markUserAsVoted(amendmentId);
+      closeVotingModal(); // or whatever method you use
+  
+    } catch (error) {
+      setMessage({
+        text: error.response?.data?.message || 'Vote submission failed',
+        type: 'error'
+      });
+    }
+  };
+  
   const openResultsModal = async (amendment) => {
     try {
       const res = await axios.get(
@@ -312,26 +371,25 @@ const VotingPage = () => {
                 <div className="space-y-2 mt-4">
                   {adminControls ? (
                     <>
+                      
                       <button
-                        onClick={() => toggleVotingStatus(amendment._id, !amendment.isVotingOpen)}
-                        className={`w-full py-2 px-4 rounded-md font-medium ${
-                          amendment.isVotingOpen
-                            ? 'bg-red-600 hover:bg-red-700 text-white'
-                            : 'bg-green-600 hover:bg-green-700 text-white'
-                        }`}
-                      >
-                        {amendment.isVotingOpen ? 'Close Voting' : 'Open Voting'}
+                            onClick={() => {
+                              if (!amendment.voted) openVotingModal(amendment);
+                            }}
+                            disabled={!amendment.isVotingOpen || amendment.voted}
+                            className={`w-full py-2 px-4 rounded-md font-medium ${
+                              !amendment.isVotingOpen || amendment.voted
+                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                            }`}
+                          >
+                            {!amendment.isVotingOpen
+                              ? 'Voting Closed'
+                              : amendment.voted
+                              ? 'Already Voted'
+                              : 'Vote'}
                       </button>
-                      <button
-                        onClick={() => toggleResultsVisibility(amendment._id, !amendment.showResults)}
-                        className={`w-full py-2 px-4 rounded-md font-medium ${
-                          amendment.showResults
-                            ? 'bg-gray-600 hover:bg-gray-700 text-white'
-                            : 'bg-blue-600 hover:bg-blue-700 text-white'
-                        }`}
-                      >
-                        {amendment.showResults ? 'Hide Results' : 'Show Results'}
-                      </button>
+
                       <button
                         onClick={() => openResultsModal(amendment)}
                         className="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white rounded-md font-medium"
@@ -342,16 +400,20 @@ const VotingPage = () => {
                   ) : (
                     <>
                       <button
-                        onClick={() => openVotingModal(amendment)}
-                        disabled={!amendment.isVotingOpen}
-                        className={`w-full py-2 px-4 rounded-md font-medium ${
-                          !amendment.isVotingOpen
-                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            : 'bg-blue-600 hover:bg-blue-700 text-white'
-                        }`}
-                      >
-                        {amendment.isVotingOpen ? 'Vote' : 'Voting Closed'}
-                      </button>
+                            onClick={() => openVotingModal(amendment)}
+                            disabled={!amendment.isVotingOpen || amendment.hasUserVoted}
+                            className={`w-full py-2 px-4 rounded-md font-medium ${
+                              !amendment.isVotingOpen || amendment.hasUserVoted
+                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                            }`}
+                          >
+                            {!amendment.isVotingOpen
+                              ? 'Voting Closed'
+                              : amendment.hasUserVoted
+                              ? 'Already Voted'
+                              : 'Vote'}
+                        </button>
                       {amendment.showResults && (
                         <button
                           onClick={() => openResultsModal(amendment)}
