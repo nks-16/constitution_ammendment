@@ -113,8 +113,18 @@ const VotingPage = () => {
         { headers: { Authorization: sessionToken } }
       );
   
-      await markUserAsVoted(amendmentId);
-      closeVotingModal(); // or whatever method you use
+      // Update the local amendment state to reflect that user has voted
+      setAmendments(prev =>
+        prev.map(a =>
+          a._id === amendmentId ? { ...a, hasUserVoted: true } : a
+        )
+      );
+  
+      closeVotingModal();
+      setMessage({
+        text: 'Vote submitted successfully',
+        type: 'success'
+      });
   
     } catch (error) {
       setMessage({
@@ -123,6 +133,7 @@ const VotingPage = () => {
       });
     }
   };
+  
   
   const openResultsModal = async (amendment) => {
     try {
