@@ -14,7 +14,7 @@ const LoginPage = () => {
     setMessage({ text: '', type: '' });
     try {
       const res = await axios.post(
-        'http://localhost:5000/api/v1/auth/login',
+        'https://constitution-ammendment-2p01.onrender.com/api/v1/auth/login',
         form
       );
       setSessionToken(res.data.sessionToken);

@@ -21,12 +21,12 @@ const VotingPage = () => {
       setIsLoading(true);
       try {
         // First verify authentication
-        await axios.get('http://localhost:5000/api/v1/auth/check', {
+        await axios.get('https://constitution-ammendment-2p01.onrender.com/api/v1/auth/check', {
           headers: { Authorization: sessionToken }
         });
         
         // Then fetch amendments
-        const response = await axios.get('http://localhost:5000/api/v1/amendments', {
+        const response = await axios.get('https://constitution-ammendment-2p01.onrender.com/api/v1/amendments', {
           headers: { Authorization: sessionToken }
         });
         
@@ -68,7 +68,7 @@ const VotingPage = () => {
   const openResultsModal = async (amendment) => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/v1/vote/public/${amendment._id}`
+        `https://constitution-ammendment-2p01.onrender.com/api/v1/vote/public/${amendment._id}`
       );
       setVoteCounts(res.data);
       setShowResultsModal(true);
@@ -91,7 +91,7 @@ const VotingPage = () => {
     
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/v1/vote',
+        'https://constitution-ammendment-2p01.onrender.com/api/v1/vote',
         { amendmentId: selectedAmendment._id, choice },
         { headers: { Authorization: sessionToken } }
       );
@@ -136,7 +136,7 @@ const VotingPage = () => {
   const toggleVotingStatus = async (amendmentId, isVotingOpen) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/v1/vote/${amendmentId}/toggle-voting`,
+        `https://constitution-ammendment-2p01.onrender.com/api/v1/vote/${amendmentId}/toggle-voting`,
         { isVotingOpen },
         { headers: { Authorization: sessionToken } }
       );
@@ -162,7 +162,7 @@ const VotingPage = () => {
   const toggleResultsVisibility = async (amendmentId, showResults) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/v1/vote/${amendmentId}/toggle-results`,
+        `https://constitution-ammendment-2p01.onrender.com/api/v1/vote/${amendmentId}/toggle-results`,
         { showResults },
         { headers: { Authorization: sessionToken } }
       );
@@ -187,7 +187,7 @@ const VotingPage = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/v1/auth/logout', {}, {
+      await axios.post('https://constitution-ammendment-2p01.onrender.com/api/v1/auth/logout', {}, {
         headers: { Authorization: sessionToken }
       });
       setSessionToken(null);

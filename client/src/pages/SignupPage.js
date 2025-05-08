@@ -12,7 +12,7 @@ const SignupPage = () => {
     e.preventDefault();
     setMessage({ text: '', type: '' });
     try {
-      await axios.post('http://localhost:5000/api/v1/auth/signup', form);
+      await axios.post('https://constitution-ammendment-2p01.onrender.com/api/v1/auth/signup', form);
       setMessage({ 
         text: 'Registration successful! Redirecting to login...', 
         type: 'success' 

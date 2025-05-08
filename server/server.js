@@ -3,14 +3,20 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const voteRoutes = require('./routes/voteRoutes');
-const cors = require('cors');
 const amendmentRoutes = require('./routes/amendmentRoutes');
+const cors = require('cors');
 
 dotenv.config();
 connectDB();
 
 const app = express();
-app.use(cors());
+
+// Restrict CORS to specific frontend domain
+app.use(cors({
+  origin: 'https://constitution-ammendment.vercel.app',
+  credentials: true,
+}));
+
 app.use(express.json());
 
 app.use('/api/v1/auth', authRoutes);
