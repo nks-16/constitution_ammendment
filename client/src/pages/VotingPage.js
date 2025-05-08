@@ -287,7 +287,7 @@ const VotingPage = () => {
               <div className="p-5 h-full flex flex-col">
                 <div className="flex-grow">
                   <h3 className="text-xl font-bold text-blue-700 mb-3">{amendment.title}</h3>
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-3">{amendment.description}</p>
+                  {/* <p className="text-sm text-gray-600 mb-4 line-clamp-3">{amendment.description}</p> */}
                   
                   {amendment.showResults && (
                     <div className="mt-4">
@@ -507,12 +507,12 @@ const VotingPage = () => {
                                   onClick={async () => {
                                     try {
                                       await axios.delete(
-                                        `http://localhost:5000/api/v1/vote/${vote._id}`,
+                                        `https://constitution-ammendment-2p01.onrender.com/api/v1/vote/${vote._id}`,
                                         { headers: { Authorization: sessionToken } }
                                       );
                                       // Refresh the data
                                       const res = await axios.get(
-                                        `http://localhost:5000/api/v1/vote/${selectedAmendment._id}`,
+                                        `https://constitution-ammendment-2p01.onrender.com/api/v1/vote/${selectedAmendment._id}`,
                                         { headers: { Authorization: sessionToken } }
                                       );
                                       setVoteCounts(res.data);
