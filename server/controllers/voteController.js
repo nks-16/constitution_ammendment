@@ -197,14 +197,14 @@ exports.getUserVoteStatus = async (req, res) => {
   }
 
   try {
+    // `req.user` is already populated by auth middleware
     const voteEntry = req.user.votes.find(
       (v) => v.amendmentId.toString() === amendmentId
     );
 
     return res.status(200).json({
       amendmentId,
-      hasVoted: !!voteEntry,
-      vote: voteEntry ? voteEntry.vote : null  // include the vote info
+      hasVoted: voteEntry ? voteEntry.hasVoted : false
     });
 
   } catch (err) {
@@ -212,6 +212,7 @@ exports.getUserVoteStatus = async (req, res) => {
     return res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
+
 
 exports.deleteVote = async (req, res) => {
   const { voteId } = req.params;
