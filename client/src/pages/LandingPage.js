@@ -6,7 +6,7 @@ const LandingPage = () => {
       <div className="container mx-auto px-4 py-6 sm:py-12 flex flex-col items-center justify-center relative">
 
         {/* Main Content */}
-        <div className="bg-white bg-opacity-90 backdrop-blur-sm rounded-xl shadow-2xl w-full sm:w-[90%] md:w-[80%] max-w-md p-6 sm:p-8 border-t-8 border-blue-700 relative overflow-hidden mt-16 sm:mt-20">
+        <div className="bg-white bg-opacity-90 backdrop-blur-sm rounded-xl shadow-2xl w-full sm:w-[90%] md:w-[80%] max-w-md p-6 sm:p-8 border-t-8 relative overflow-hidden mt-16 sm:mt-20" style={{ borderTopColor: '#189AB4' }}>
 
           {/* Decorative elements */}
           {/* Decorative element (bottom left only) */}
@@ -23,12 +23,13 @@ const LandingPage = () => {
               />
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3 font-serif">
-              Constitutional Amendments Portal
+             NISB Constitution Amendments Portal
             </h1>
             <div className="flex justify-center mt-2 space-x-2">
-              <div className="w-1/3 h-1.5 bg-blue-600 rounded-full"></div>
-              <div className="w-1/3 h-1.5 bg-red-600 rounded-full"></div>
-              <div className="w-1/3 h-1.5 bg-blue-600 rounded-full"></div>
+            <div className="w-1/3 h-1.5 bg-[#0B6073] rounded-full"></div> {/* Lighter than #05445E */}
+<div className="w-1/3 h-1.5 bg-[#6FBFDD] rounded-full"></div> {/* Lighter than #88C9E0 */}
+<div className="w-1/3 h-1.5 bg-[#BEE3E7] rounded-full"></div> {/* Lighter than #D4F1F4 */}
+
             </div>
           </div>
 
@@ -39,7 +40,7 @@ const LandingPage = () => {
             </p>
             <Link 
               to="/login" 
-              className="inline-block bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg text-sm"
+              className="inline-block text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg text-sm" style={{ backgroundColor: '#189AB4' }} // Darker than #0B6073
             >
               Get Started
             </Link>

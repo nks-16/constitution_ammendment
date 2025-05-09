@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-
 const VotingPage = () => {
   const [amendments, setAmendments] = useState([]);
   const [selectedAmendment, setSelectedAmendment] = useState(null);
@@ -342,8 +341,8 @@ const VotingPage = () => {
 
       <div className="container mx-auto py-8">
         {/* Header */}
-        <div className="text-center mb-10 sticky mt-10 mb-20">
-          <h1 className="absolute text-3xl sm:text-4xl text-black font-bold my-19 font-serif text-align:center" >Constitution Amendments</h1>
+        <div className="text-center mb-5 sticky mt-10">
+          <h1 className="text-3xl sm:text-4xl text-black font-bold my-19 font-serif text-center" >Constitution Amendments</h1>
         </div>
 
         {/* Message display */}
@@ -402,7 +401,7 @@ const VotingPage = () => {
       {/* Card Content */}
       <div className="flex flex-col h-full">
         <div className="flex-grow">
-          <h3 className="text-base sm:text-lg font-bold text-blue-700 mb-2" style={{color: '#05445E'}}>
+          <h3 className="text-base sm:text-lg font-bold mb-2" style={{color: '#05445E'}}>
             {amendment.title}
           </h3>
         </div>
@@ -411,23 +410,24 @@ const VotingPage = () => {
         <div className="mt-4 flex gap-2 flex-wrap">
           {adminControls ? (
             <>
-              <button
-                onClick={() => {
-                  if (!amendment.voted) openVotingModal(amendment);
-                }}
-                disabled={!amendment.isVotingOpen || !amendment.voted}
-                className={`flex-1 min-w-[48%] text-xs py-1.5 px-3 rounded-md font-medium ${
-                  !amendment.isVotingOpen || amendment.voted
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
-                }`}
-              >
-                {!amendment.isVotingOpen
-                  ? 'Voting Closed'
-                  : amendment.voted
-                  ? 'Already Voted'
-                  : 'Vote'}
-              </button>
+<button
+  onClick={() => {
+    if (!amendment.voted) openVotingModal(amendment);
+  }}
+  disabled={!amendment.isVotingOpen || !amendment.voted}
+  className={`flex-1 min-w-[48%] text-xs py-1.5 px-3 rounded-md font-medium transition-all duration-200 ${
+    !amendment.isVotingOpen || amendment.voted
+      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+      : 'bg-[#05445E] text-white hover:bg-[#033649]'
+  }`}
+>
+  {!amendment.isVotingOpen
+    ? 'Voting Closed'
+    : amendment.voted
+    ? 'Already Voted'
+    : 'Vote'}
+</button>
+
 
               <button
                 onClick={() => openResultsModal(amendment)}
@@ -440,7 +440,7 @@ const VotingPage = () => {
             <>
               <button
                 onClick={() => openVotingModal(amendment)}
-                disabled={!amendment.isVotingOpen || amendment.voted}
+                disabled={!amendment.isVotingOpen || amendment.hasUserVoted}
                 className={`flex-1 min-w-[48%] text-xs py-1.5 px-3 rounded-md font-medium ${
                   !amendment.isVotingOpen || amendment.hasUserVoted
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -449,18 +449,19 @@ const VotingPage = () => {
               >
                 {!amendment.isVotingOpen
                   ? 'Voting Closed'
-                  : amendment.voted
+                  : amendment.hasUserVoted
                   ? 'Already Voted'
                   : 'Vote'}
               </button>
 
               {amendment.showResults && (
-                <button
-                  onClick={() => openResultsModal(amendment)}
-                  className="flex-1 min-w-[48%] text-xs py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium"
-                >
-                  View Results
-                </button>
+               <button
+               onClick={() => openResultsModal(amendment)}
+               className="flex-1 min-w-[48%] text-xs py-1.5 px-3 bg-[#189AB4] hover:bg-[#033649] text-white rounded-md font-medium transition duration-300 ease-in-out"
+             >
+               View Results
+             </button>
+             
               )}
             </>
           )}
@@ -474,7 +475,7 @@ const VotingPage = () => {
         {/* Voting Modal */}
         {showVotingModal && selectedAmendment && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl border-t-8 border-blue-700">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl border-t-8" style={{ borderTopColor: '#189AB4' }}>
               <div className="p-6 sm:p-8">
                 <div className="flex justify-between items-start mb-6">
                   <h2 className="text-2xl font-bold text-gray-800">{selectedAmendment.title}</h2>
@@ -496,14 +497,17 @@ const VotingPage = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-                  <button
-                    onClick={() => setChoice('YES')}
-                    className={`flex-1 py-3 px-6 rounded-lg font-bold text-lg transition-all ${
-                      choice === 'YES' 
-                        ? 'bg-green-600 text-white shadow-lg ring-2 ring-green-300' 
-                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                    }`}
-                  >
+                 <button
+  onClick={() => setChoice('YES')}
+  className={`flex-1 py-3 px-6 rounded-lg font-bold text-lg transition-all ${
+    choice === 'YES'
+      ? 'bg-[#05445E] text-white shadow-lg ring-2 ring-[#88C9E0]'  // selected state
+      : 'bg-[#D4F1F4] hover:bg-[#B0D9E2] text-[#05445E]'            // unselected state
+  }`}
+>
+
+
+                  
                     <div className="flex items-center justify-center">
                       <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
@@ -512,13 +516,15 @@ const VotingPage = () => {
                     </div>
                   </button>
                   <button
-                    onClick={() => setChoice('NO')}
-                    className={`flex-1 py-3 px-6 rounded-lg font-bold text-lg transition-all ${
-                      choice === 'NO' 
-                        ? 'bg-red-600 text-white shadow-lg ring-2 ring-red-300' 
-                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                    }`}
-                  >
+  onClick={() => setChoice('NO')}
+  className={`flex-1 py-3 px-6 rounded-lg font-bold text-lg transition-all ${
+    choice === 'NO'
+      ? 'bg-[#033649] text-white shadow-lg ring-2 ring-[#88C9E0]' // selected state
+      : 'bg-[#D4F1F4] hover:bg-[#B0D9E2] text-[#033649]'           // unselected state
+  }`}
+>
+
+
                     <div className="flex items-center justify-center">
                       <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -529,15 +535,18 @@ const VotingPage = () => {
                 </div>
 
                 <div className="text-center">
-                  <button
-                    onClick={handleVote}
-                    disabled={!choice}
-                    className={`bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-lg transition duration-300 ease-in-out shadow-md text-lg ${
-                      !choice ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
-                  >
-                    SUBMIT VOTE
-                  </button>
+                <button
+  onClick={handleVote}
+  disabled={!choice}
+  className={`text-white font-bold py-3 px-8 rounded-lg text-lg transition duration-300 ease-in-out shadow-md ${
+    !choice
+      ? 'bg-[#05445E] opacity-50 cursor-not-allowed'
+      : 'bg-[#05445E] hover:bg-[#033649]'
+  }`}
+>
+  SUBMIT VOTE
+</button>
+
                 </div>
               </div>
             </div>
