@@ -32,9 +32,9 @@ const VotingPage = () => {
             voteInfo: res.data.vote, // optional, in case you want to show choice later
           };
         })
-      );
-  
+      );  
       setAmendments(updatedAmendments);
+      console.log(updatedAmendments);
     } catch (error) {
       console.error('Failed to fetch vote statuses', error);
     }
@@ -48,7 +48,7 @@ const VotingPage = () => {
         );
   
         const amendments = res.data.amendments;
-        
+        console.log(amendments);
       } catch (error) {
         console.error('Failed to fetch amendments', error);
       }
