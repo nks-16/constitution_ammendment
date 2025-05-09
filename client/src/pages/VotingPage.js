@@ -23,30 +23,23 @@ const VotingPage = () => {
       { headers: { Authorization: sessionToken } }
     );
 
-    const data = res.data; // ✅ Axios stores response data here
-
     setAmendments((prev) =>
       prev.map((amendment) =>
         amendment._id === amendmentId
-          ? { ...amendment, voted: data.hasVoted, voteInfo: data.vote }
+          ? { 
+              ...amendment, 
+              hasVoted: res.data.hasVoted,
+              userVote: res.data.vote?.choice // Store the user's vote choice if available
+            }
           : amendment
       )
     );
-
-    console.log('Updated amendments:', amendments);
-    localStorage.setItem('amendments', JSON.stringify(amendments));
   } catch (err) {
     console.error('Failed to fetch vote status for amendment', err);
   }
 };
 
-  useEffect(() => {
-  const localData = localStorage.getItem('amendments');
-  if (localData) {
-    setAmendments(JSON.parse(localData));
-  } else {
-  }
-}, []);
+
 
   const fetchVoteStatuses = async (amendments) => {
     try {
@@ -90,41 +83,65 @@ const VotingPage = () => {
   }, []);
     
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        // First verify authentication
-        await axios.get('https://constitution-ammendment-2p01.onrender.com/api/v1/auth/check', {
-          headers: { Authorization: sessionToken }
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      // Verify authentication
+      await axios.get('https://constitution-ammendment-2p01.onrender.com/api/v1/auth/check', {
+        headers: { Authorization: sessionToken }
+      });
+      
+      // Fetch amendments
+      const response = await axios.get('https://constitution-ammendment-2p01.onrender.com/api/v1/amendments', {
+        headers: { Authorization: sessionToken }
+      });
+      
+      // Fetch vote status for each amendment
+      const amendmentsWithVoteStatus = await Promise.all(
+        response.data.map(async (amendment) => {
+          try {
+            const voteStatus = await axios.get(
+              `https://constitution-ammendment-2p01.onrender.com/api/v1/vote/${amendment._id}/has-voted`,
+              { headers: { Authorization: sessionToken } }
+            );
+            return {
+              ...amendment,
+              hasVoted: voteStatus.data.hasVoted,
+              userVote: voteStatus.data.vote?.choice
+            };
+          } catch (error) {
+            console.error(`Failed to fetch vote status for amendment ${amendment._id}`, error);
+            return {
+              ...amendment,
+              hasVoted: false,
+              userVote: null
+            };
+          }
+        })
+      );
+      
+      setAmendments(amendmentsWithVoteStatus);
+    } catch (error) {
+      console.error('Fetch error:', error);
+      if (error.response?.status === 401) {
+        navigate('/');
+      } else {
+        setMessage({
+          text: 'Failed to load data. Please try again.',
+          type: 'error'
         });
-        
-        // Then fetch amendments
-        const response = await axios.get('https://constitution-ammendment-2p01.onrender.com/api/v1/amendments', {
-          headers: { Authorization: sessionToken }
-        });
-        
-        setAmendments(response.data);
-      } catch (error) {
-        console.error('Fetch error:', error);
-        if (error.response?.status === 401) {
-          navigate('/');
-        } else {
-          setMessage({
-            text: 'Failed to load data. Please try again.',
-            type: 'error'
-          });
-        }
-      } finally {
-        setIsLoading(false);
       }
-    };
-  
-    if (sessionToken) {
-      fetchData();
-    } else {
-      navigate('/');
+    } finally {
+      setIsLoading(false);
     }
-  }, [sessionToken, navigate]);
+  };
+
+  if (sessionToken) {
+    fetchData();
+  } else {
+    navigate('/');
+  }
+}, [sessionToken, navigate]);
 
   const openVotingModal = (amendment) => {
     setSelectedAmendment(amendment);
@@ -199,52 +216,52 @@ const VotingPage = () => {
 
   // VotingPage.js
   const handleVote = async () => {
-    if (!choice || !selectedAmendment) return;
+  if (!choice || !selectedAmendment) return;
+  
+  try {
+    const response = await axios.post(
+      'https://constitution-ammendment-2p01.onrender.com/api/v1/vote',
+      { amendmentId: selectedAmendment._id, choice },
+      { headers: { Authorization: sessionToken } }
+    );
+
+    // Update local state
+    setAmendments(prev => prev.map(amendment => 
+      amendment._id === selectedAmendment._id 
+        ? { 
+            ...amendment, 
+            hasVoted: true,
+            userVote: choice,
+            yesVotes: choice === 'YES' ? amendment.yesVotes + 1 : amendment.yesVotes,
+            noVotes: choice === 'NO' ? amendment.noVotes + 1 : amendment.noVotes
+          } 
+        : amendment
+    ));
+
+    setMessage({ 
+      text: `Your vote for ${selectedAmendment.title} has been recorded`, 
+      type: 'success' 
+    });
+    closeVotingModal();
+  } catch (error) {
+    console.error('Voting error:', error);
+    let errorMessage = error.response?.data?.message || 
+                      `Failed to submit vote for ${selectedAmendment.title}`;
     
-    try {
-      const response = await axios.post(
-        'https://constitution-ammendment-2p01.onrender.com/api/v1/vote',
-        { amendmentId: selectedAmendment._id, choice },
-        { headers: { Authorization: sessionToken } }
-      );
-  
-      // Update local state only for this specific amendment
-      setAmendments(prev => prev.map(amendment => 
-        amendment._id === selectedAmendment._id 
-          ? { 
-              ...amendment, 
-              yesVotes: choice === 'YES' ? amendment.yesVotes + 1 : amendment.yesVotes,
-              noVotes: choice === 'NO' ? amendment.noVotes + 1 : amendment.noVotes,
-              hasVoted: true // Only mark THIS amendment as voted
-            } 
-          : amendment
-      ));
-  
-      setMessage({ 
-        text: `Your vote for ${selectedAmendment.title} has been recorded`, 
-        type: 'success' 
-      });
-      closeVotingModal();
-    } catch (error) {
-      console.error('Voting error:', error);
-      
-      let errorMessage = error.response?.data?.message || 
-                        `Failed to submit vote for ${selectedAmendment.title}`;
-      
-      if (error.response?.status === 400) {
-        if (error.response.data.message.includes('specific amendment')) {
-          errorMessage = "You've already voted on this specific amendment";
-        } else {
-          errorMessage = "Voting is currently closed for this amendment";
-        }
+    if (error.response?.status === 400) {
+      if (error.response.data.message.includes('already voted')) {
+        errorMessage = "You've already voted on this amendment";
+      } else {
+        errorMessage = "Voting is currently closed for this amendment";
       }
-  
-      setMessage({ 
-        text: errorMessage, 
-        type: 'error' 
-      });
     }
-  };
+
+    setMessage({ 
+      text: errorMessage, 
+      type: 'error' 
+    });
+  }
+};
   const toggleVotingStatus = async (amendmentId, isVotingOpen) => {
     try {
       await axios.put(
@@ -456,21 +473,24 @@ const VotingPage = () => {
             </>
           ) : (
             <>
-              <button
-                onClick={() => openVotingModal(amendment)}
-                disabled={!amendment.isVotingOpen || amendment.voted}
-                className={`flex-1 min-w-[48%] text-xs py-1.5 px-3 rounded-md font-medium ${
-                  !amendment.isVotingOpen || amendment.voted
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-[#189AB4] hover:bg-[#033649] text-white'
-                }`}
-              >
-                {!amendment.isVotingOpen
-                  ? 'Voting Closed'
-                  : amendment.voted
-                  ? 'Already Voted'
-                  : 'Vote'}
-              </button>
+              // In your amendment card rendering code, update the button logic:
+<button
+  onClick={() => openVotingModal(amendment)}
+  disabled={amendment.hasVoted || !amendment.isVotingOpen}
+  className={`flex-1 min-w-[48%] text-xs py-1.5 px-3 rounded-md font-medium ${
+    amendment.hasVoted || !amendment.isVotingOpen
+      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+      : 'bg-[#189AB4] hover:bg-[#033649] text-white'
+  }`}
+>
+  {amendment.hasVoted
+    ? amendment.userVote === 'YES' 
+      ? 'Voted Yes' 
+      : 'Voted No'
+    : !amendment.isVotingOpen
+      ? 'Voting Closed'
+      : 'Vote'}
+</button>
 
               {amendment.showResults && (
                <button
