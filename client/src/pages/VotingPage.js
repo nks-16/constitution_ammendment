@@ -179,6 +179,34 @@ const VotingPage = () => {
     setVoteCounts(null);
   };
 
+  const AmendmentsList = ({ amendments }) => {
+  useEffect(() => {
+    amendments.forEach(amendment => {
+      if (amendment.voted === undefined) {
+        fetchVoteStatusForAmendment(amendment._id);
+      }
+    });
+  }, [amendments]);
+
+  return (
+    <>
+      {amendments.map(amendment => (
+        <div
+          key={amendment._id}
+          className="bg-white rounded-lg shadow-sm overflow-hidden border-t-4 hover:shadow-md transition-shadow relative p-2"
+          style={{ borderTopColor: '#189AB4' }}
+        >
+          {amendment.isVotingOpen && (
+            <div className="absolute top-2 right-2 bg-green-100 text-green-700 text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full border border-green-300 shadow-sm">
+              OPEN
+            </div>
+          )}
+        </div>
+      ))}
+    </>
+  );
+};
+
   // VotingPage.js
   const handleVote = async () => {
     if (!choice || !selectedAmendment) return;
