@@ -317,8 +317,8 @@ const VotingPage = () => {
 
       <div className="container mx-auto py-8">
         {/* Header */}
-        <div className="text-center mb-10 sticky mt-10 mb-20">
-          <h1 className="absolute text-3xl sm:text-4xl text-black font-bold my-19 font-serif text-align:center" >Constitution Amendments</h1>
+        <div className="text-center mb-5 sticky mt-10">
+          <h1 className="text-3xl sm:text-4xl text-black font-bold my-19 font-serif text-center" >Constitution Amendments</h1>
         </div>
 
         {/* Message display */}
