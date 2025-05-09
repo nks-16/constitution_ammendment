@@ -16,6 +16,30 @@ const VotingPage = () => {
   const [adminControls, setAdminControls] = useState(false);
   const navigate = useNavigate();
   const { sessionToken, setSessionToken, userData } = useAuth();
+  
+  const fetchVoteStatusForAmendment = async (amendmentId) => {
+  try {
+    const res = await axios.get(
+      `https://constitution-ammendment-2p01.onrender.com/api/v1/vote/${amendmentId}/has-voted`,
+      { headers: { Authorization: sessionToken } }
+    );
+
+    const data = res.data; // ✅ Axios stores response data here
+
+    setAmendments((prev) =>
+      prev.map((amendment) =>
+        amendment._id === amendmentId
+          ? { ...amendment, voted: data.hasVoted, voteInfo: data.vote }
+          : amendment
+      )
+    );
+
+    console.log('Updated amendments:', amendments);
+  } catch (err) {
+    console.error('Failed to fetch vote status for amendment', err);
+  }
+};
+
 
   const fetchVoteStatuses = async (amendments) => {
     try {
@@ -28,8 +52,7 @@ const VotingPage = () => {
   
           return {
             ...amendment,
-            voted: res.data.hasVoted,
-            voteInfo: res.data.vote, // optional, in case you want to show choice later
+            voted: res.data,
           };
         })
       );  
@@ -39,6 +62,8 @@ const VotingPage = () => {
       console.error('Failed to fetch vote statuses', error);
     }
   };
+
+  
   useEffect(() => {
     const fetchAmendments = async () => {
       try {
@@ -356,10 +381,16 @@ const VotingPage = () => {
     return numA - numB;
   })
   .map(amendment => (
-    <div 
-      key={amendment._id} 
-      className="bg-white rounded-lg shadow-sm overflow-hidden border-t-4 hover:shadow-md transition-shadow relative p-2" style={{ borderTopColor: '#189AB4' }}
-    >
+  <div 
+    key={amendment._id} 
+    className="bg-white rounded-lg shadow-sm overflow-hidden border-t-4 hover:shadow-md transition-shadow relative p-2" 
+    style={{ borderTopColor: '#189AB4' }}
+    onMouseEnter={() => {
+      if (amendment.voted === undefined) {
+        fetchVoteStatusForAmendment(amendment._id);
+      }
+    }} // Corrected here, added missing closing parenthesis
+  >
       {/* Status Badges */}
       {amendment.isVotingOpen && (
         <div className="absolute top-2 right-2 bg-green-100 text-green-700 text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full border border-green-300 shadow-sm">
@@ -384,7 +415,7 @@ const VotingPage = () => {
                 onClick={() => {
                   if (!amendment.voted) openVotingModal(amendment);
                 }}
-                disabled={!amendment.isVotingOpen || amendment.voted}
+                disabled={!amendment.isVotingOpen || !amendment.voted}
                 className={`flex-1 min-w-[48%] text-xs py-1.5 px-3 rounded-md font-medium ${
                   !amendment.isVotingOpen || amendment.voted
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -409,7 +440,7 @@ const VotingPage = () => {
             <>
               <button
                 onClick={() => openVotingModal(amendment)}
-                disabled={!amendment.isVotingOpen || amendment.hasUserVoted}
+                disabled={!amendment.isVotingOpen || amendment.voted}
                 className={`flex-1 min-w-[48%] text-xs py-1.5 px-3 rounded-md font-medium ${
                   !amendment.isVotingOpen || amendment.hasUserVoted
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -418,7 +449,7 @@ const VotingPage = () => {
               >
                 {!amendment.isVotingOpen
                   ? 'Voting Closed'
-                  : amendment.hasUserVoted
+                  : amendment.voted
                   ? 'Already Voted'
                   : 'Vote'}
               </button>
