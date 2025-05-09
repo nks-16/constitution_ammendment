@@ -32,9 +32,9 @@ const VotingPage = () => {
             voteInfo: res.data.vote, // optional, in case you want to show choice later
           };
         })
-      );
-  
+      );  
       setAmendments(updatedAmendments);
+      console.log(updatedAmendments);
     } catch (error) {
       console.error('Failed to fetch vote statuses', error);
     }
@@ -47,8 +47,8 @@ const VotingPage = () => {
           { headers: { Authorization: sessionToken } }
         );
   
-        const amendments = res.data.amendments;
-        await fetchVoteStatuses(amendments);
+        setAmendments(res.data);
+        console.log(amendments);
       } catch (error) {
         console.error('Failed to fetch amendments', error);
       }
@@ -295,7 +295,7 @@ const VotingPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 bg-opacity-90 bg-[url('https://images.unsplash.com/photo-1571321278340-39e4fe3c1f66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center bg-no-repeat bg-fixed">
-      <div className="absolute top-4 right-4 flex items-center space-x-4">
+      <div className="absolute top-4 right-4 flex items-center space-x-4 my-2">
         {adminControls && (
           <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
             ADMIN MODE
@@ -318,7 +318,7 @@ const VotingPage = () => {
       <div className="container mx-auto py-8">
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className=" absolute text-3xl sm:text-4xl text-black font-bold mb-2 mt-5  my-15 font-serif">Constitution Amendments</h1>
+          <h1 className="absolute text-3xl sm:text-4xl text-black font-bold my-19 font-serif">Constitution Amendments</h1>
         </div>
 
         {/* Message display */}

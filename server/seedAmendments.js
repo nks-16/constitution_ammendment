@@ -1,36 +1,29 @@
-require('dotenv').config();
 const mongoose = require('mongoose');
-const Amendment = require('./models/Amendment');
+const Amendment = require('./models/Amendment'); // Adjust path as needed
 
-async function seedAmendments() {
+// Replace with your MongoDB connection string
+const MONGO_URI = 'mongodb+srv://mind-quest:Dheeraj2004@mindquest.oefn1.mongodb.net/constitution?retryWrites=true&w=majority&appName=mindquest'; // or your Atlas URL
+
+mongoose.connect(MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(async () => {
+  console.log('Connected to MongoDB');
+
+  // Create 15 amendments
+  const amendments = Array.from({ length: 15 }, (_, i) => ({
+    title: `Amendment ${i + 1}`,
+    description: '  ', // empty description
+  }));
+
   try {
-    await mongoose.connect(process.env.MONGO_URI);
-    
-    const amendments = [
-      {
-        title: "Amendment 1: Freedom of Speech",
-        description: "Protects the right to freedom of speech and expression",
-        isVotingOpen: false,
-        showResults: false
-      },
-      {
-        title: "Amendment 2: Right to Privacy",
-        description: "Establishes constitutional protection for personal privacy",
-        isVotingOpen: false,
-        showResults: false
-      },
-      // Add more amendments as needed
-    ];
-
-    await Amendment.deleteMany({}); // Clear existing
     await Amendment.insertMany(amendments);
-    
-    console.log('Amendments seeded successfully!');
-    process.exit();
+    console.log('15 amendments added successfully!');
   } catch (err) {
-    console.error('Error seeding amendments:', err);
-    process.exit(1);
+    console.error('Error inserting amendments:', err);
+  } finally {
+    mongoose.connection.close();
   }
-}
-
-seedAmendments();
+})
+.catch(err => console.error('MongoDB connection error:', err));
