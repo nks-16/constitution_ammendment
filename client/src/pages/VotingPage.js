@@ -569,6 +569,17 @@ const VotingPage = () => {
   ></div>
 </div>
 </div>
+              <div className="mt-4 text-center">
+  {(voteCounts.yesVotes + voteCounts.noVotes) > 0 ? (
+    voteCounts.yesVotes >= (2 / 3) * (voteCounts.yesVotes + voteCounts.noVotes) ? (
+      <p className="text-[#05445E] font-semibold text-lg">✅ Amendment Passed (≥ 2/3 Yes)</p>
+    ) : (
+      <p className="text-[#05445E] font-semibold text-lg">❌ Amendment Failed (&lt; 2/3 Yes)</p>
+    )
+  ) : (
+    <p className="text-gray-500 italic">No votes recorded yet.</p>
+  )}
+</div>
 
                 </div>
 
