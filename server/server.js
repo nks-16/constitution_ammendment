@@ -11,8 +11,12 @@ connectDB();
 
 const app = express();
 
+const allowedOrigins = ['https://constitution-ammendment.vercel.app'];
+
 app.use(cors({
-  origin: '*', // ⚠️ Not for production
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true
 }));
 
 
