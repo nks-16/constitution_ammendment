@@ -39,6 +39,26 @@ const VotingPage = () => {
       console.error('Failed to fetch vote statuses', error);
     }
   };
+  const fetchVoteStatusForAmendment = async (amendmentId) => {
+  try {
+    const res = await axios.get(
+      `https://constitution-ammendment-2p01.onrender.com/api/v1/vote/${amendmentId}/has-voted`,
+      { headers: { Authorization: sessionToken } }
+    );
+
+    // Update the specific amendment in the array
+    setAmendments((prev) =>
+      prev.map((amendment) =>
+        amendment._id === amendmentId
+          ? { ...amendment, voted: res.data.hasVoted, voteInfo: res.data.vote }
+          : amendment
+      )
+    );
+  } catch (err) {
+    console.error('Failed to fetch vote status for amendment', err);
+  }
+};
+
   useEffect(() => {
     const fetchAmendments = async () => {
       try {
@@ -566,6 +586,18 @@ const VotingPage = () => {
                         )}
                       </div>
                   </div>
+                  {/* ✅ Result */}
+                <div className="mt-4 text-center">
+                  {(voteCounts.yesVotes + voteCounts.noVotes) > 0 ? (
+                    voteCounts.yesVotes >= (2 / 3) * (voteCounts.yesVotes + voteCounts.noVotes) ? (
+                      <p className="text-green-700 font-semibold text-lg">✅ Amendment Passed (≥ 2/3 Yes)</p>
+                    ) : (
+                      <p className="text-red-700 font-semibold text-lg">❌ Amendment Failed (&lt; 2/3 Yes)</p>
+                    )
+                  ) : (
+                    <p className="text-gray-600 italic">No votes recorded yet.</p>
+                  )}
+                </div>
                 </div>
 
                 {adminControls && voteCounts.votes && (
