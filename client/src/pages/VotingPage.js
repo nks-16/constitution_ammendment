@@ -507,21 +507,21 @@ const VotingPage = () => {
         )}
 
         {/* Results Modal */}
-        {showResultsModal && voteCounts && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl border-t-8 border-blue-700">
-              <div className="p-6 sm:p-8">
-                <div className="flex justify-between items-start mb-6">
-                  <h2 className="text-2xl font-bold text-gray-800">{voteCounts.amendmentTitle} Results</h2>
-                  <button 
-                    onClick={closeResultsModal}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                  </button>
-                </div>
+          {showResultsModal && voteCounts && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+              <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl border-t-8 border-blue-700">
+                <div className="p-6 sm:p-8">
+                  <div className="flex justify-between items-start mb-6">
+                    <h2 className="text-2xl font-bold text-gray-800">{voteCounts.amendmentTitle} Results</h2>
+                    <button 
+                      onClick={closeResultsModal}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                    </button>
+                  </div>
 
                 <div className="mb-6">
                   <div className="flex justify-between mb-2">
@@ -537,6 +537,28 @@ const VotingPage = () => {
                           : 0}%` 
                       }}
                     ></div>
+                    <div className="w-full bg-gray-200 rounded-full h-4">
+                        <div 
+                          className="bg-gradient-to-r from-green-500 to-red-500 h-4 rounded-full" 
+                          style={{ 
+                            width: `${voteCounts.yesVotes + voteCounts.noVotes > 0 
+                              ? (voteCounts.yesVotes / (voteCounts.yesVotes + voteCounts.noVotes)) * 100 
+                              : 0}%` 
+                          }}
+                        ></div>
+                      </div>
+                      {/* ✅ Result */}
+                      <div className="mt-4 text-center">
+                        {(voteCounts.yesVotes + voteCounts.noVotes) > 0 ? (
+                          (voteCounts.yesVotes / (voteCounts.yesVotes + voteCounts.noVotes)) >= (2 / 3) ? (
+                            <p className="text-green-700 font-semibold text-lg">✅ Amendment Passed (≥ 2/3 Yes)</p>
+                          ) : (
+                            <p className="text-red-700 font-semibold text-lg">❌ Amendment Failed (&lt; 2/3 Yes)</p>
+                          )
+                        ) : (
+                          <p className="text-gray-600 italic">No votes recorded yet.</p>
+                        )}
+                      </div>
                   </div>
                 </div>
 
