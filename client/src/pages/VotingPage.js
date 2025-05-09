@@ -473,7 +473,6 @@ const VotingPage = () => {
             </>
           ) : (
             <>
-              // In your amendment card rendering code, update the button logic:
 <button
   onClick={() => openVotingModal(amendment)}
   disabled={amendment.hasVoted || !amendment.isVotingOpen}
