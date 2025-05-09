@@ -346,7 +346,13 @@ const VotingPage = () => {
 
 {/*amendment grid*/}
 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 relative p-8">
-  {amendments.map(amendment => (
+  {[...amendments]
+  .sort((a, b) => {
+    const numA = parseInt(a.title.match(/\d+/));
+    const numB = parseInt(b.title.match(/\d+/));
+    return numA - numB;
+  })
+  .map(amendment => (
     <div 
       key={amendment._id} 
       className="bg-white rounded-lg shadow-sm overflow-hidden border-t-4 border-blue-500 hover:shadow-md transition-shadow relative p-2"
