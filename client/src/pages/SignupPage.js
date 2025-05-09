@@ -25,7 +25,7 @@ const SignupPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 bg-opacity-90 bg-[url('https://images.unsplash.com/photo-1571321278340-39e4fe3c1f66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center bg-no-repeat bg-fixed">
-      <div className="bg-white bg-opacity-90 p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-md mx-auto border-t-8 border-blue-700 relative overflow-hidden">
+      <div className="bg-white bg-opacity-90 p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-md mx-auto border-t-8  relative overflow-hidden" style={{ borderTopColor: '#189AB4' }}>
         {/* Background decorations */}
         {/* Decorative element (bottom left only) */}
             <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-red-100 rounded-full opacity-20"></div>
@@ -38,11 +38,11 @@ const SignupPage = () => {
             <img src="/nisb_white_logo.png" alt="Logo" className="w-20 h-20 sm:w-24 sm:h-24 object-contain" />
           </div>
           <h2 className="text-3xl font-bold text-gray-800 font-serif">Voter Registration</h2>
-          <p className="text-gray-600 text-sm">Apply for constitutional voting access</p>
+          <p className="text-gray-600 text-sm">Apply for voting access</p>
           <div className="flex justify-center mt-4 space-x-4">
-            <div className="w-1/3 h-1 bg-blue-600 rounded-full"></div>
-            <div className="w-1/3 h-1 bg-red-600 rounded-full"></div>
-            <div className="w-1/3 h-1 bg-blue-600 rounded-full"></div>
+          <div className="w-1/3 h-1.5 bg-[#0B6073] rounded-full"></div> {/* Lighter than #05445E */}
+<div className="w-1/3 h-1.5 bg-[#6FBFDD] rounded-full"></div> {/* Lighter than #88C9E0 */}
+<div className="w-1/3 h-1.5 bg-[#BEE3E7] rounded-full"></div> {/* Lighter than #D4F1F4 */}
           </div>
         </div>
 
@@ -105,7 +105,7 @@ const SignupPage = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-[1.01] shadow-md"
+            className="w-full  text-white font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-[1.01] shadow-md" style={{ backgroundColor: '#189AB4' }}
           >
             Register for Voting
           </button>

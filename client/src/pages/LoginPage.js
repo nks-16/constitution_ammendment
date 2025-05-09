@@ -35,7 +35,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 bg-opacity-90 bg-[url('https://images.unsplash.com/photo-1571321278340-39e4fe3c1f66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center bg-no-repeat bg-fixed">
-      <div className="bg-white p-6 sm:p-10 rounded-xl shadow-2xl w-full max-w-md mx-4 border-t-8 border-blue-700 relative overflow-hidden">
+      <div className="bg-white p-6 sm:p-10 rounded-xl shadow-2xl w-full max-w-md mx-4 border-t-8 relative overflow-hidden" style={{ borderTopColor: '#189AB4' }}>
         {/* Background decorations */}
         {/* Decorative element (bottom left only) */}
             <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-red-100 rounded-full opacity-20"></div>
@@ -46,12 +46,12 @@ const LoginPage = () => {
           <div className="flex justify-center mb-4">
             <img src="/nisb_white_logo.png" alt="Logo" className="w-20 h-20 sm:w-24 sm:h-24 object-contain" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1 sm:mb-2 font-serif">Constitution Amendment Portal</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1 sm:mb-2 font-serif">NISB Constitution Amendment Portal</h2>
           <p className="text-gray-600 text-xs sm:text-sm">Secure login for registered voters</p>
           <div className="flex justify-center mt-3 sm:mt-4 space-x-4">
-            <div className="w-1/3 h-1 bg-blue-600 rounded-full"></div>
-            <div className="w-1/3 h-1 bg-red-600 rounded-full"></div>
-            <div className="w-1/3 h-1 bg-blue-600 rounded-full"></div>
+          <div className="w-1/3 h-1.5 bg-[#0B6073] rounded-full"></div> {/* Lighter than #05445E */}
+<div className="w-1/3 h-1.5 bg-[#6FBFDD] rounded-full"></div> {/* Lighter than #88C9E0 */}
+<div className="w-1/3 h-1.5 bg-[#BEE3E7] rounded-full"></div> {/* Lighter than #D4F1F4 */}
           </div>
         </div>
 
@@ -116,7 +116,7 @@ const LoginPage = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 sm:py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-[1.01] shadow-md flex items-center justify-center text-sm sm:text-base"
+            className="w-full text-white font-bold py-2 sm:py-3 px-4 rounded-md transition duration-300 ease-in-out transform hover:scale-[1.01] shadow-md flex items-center justify-center text-sm sm:text-base" style={{ backgroundColor: '#189AB4' }}
           >
             <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
