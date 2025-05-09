@@ -11,7 +11,6 @@ connectDB();
 
 const app = express();
 
-// Restrict CORS to specific frontend domain
 app.use(cors({
   origin: '*', // ⚠️ Not for production
 }));
