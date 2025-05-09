@@ -16,6 +16,84 @@ const VotingPage = () => {
   const [adminControls, setAdminControls] = useState(false);
   const navigate = useNavigate();
   const { sessionToken, setSessionToken, userData } = useAuth();
+
+  const fetchVoteStatuses = async (amendments) => {
+    try {
+      const updatedAmendments = await Promise.all(
+        amendments.map(async (amendment) => {
+          const res = await axios.get(
+            `https://constitution-ammendment-2p01.onrender.com/api/v1/vote/${amendment._id}/has-voted`,
+            { headers: { Authorization: sessionToken } }
+          );
+  
+          return {
+            ...amendment,
+            voted: res.data.hasVoted,
+            voteInfo: res.data.vote, // optional, in case you want to show choice later
+          };
+        })
+      );
+  
+      setAmendments(updatedAmendments);
+    } catch (error) {
+      console.error('Failed to fetch vote statuses', error);
+    }
+  };
+  useEffect(() => {
+    const fetchAmendments = async () => {
+      try {
+        const res = await axios.get(
+          `https://constitution-ammendment-2p01.onrender.com/api/v1/amendments`,
+          { headers: { Authorization: sessionToken } }
+        );
+  
+        const amendments = res.data.amendments;
+        await fetchVoteStatuses(amendments);
+      } catch (error) {
+        console.error('Failed to fetch amendments', error);
+      }
+    };
+  
+    fetchAmendments();
+  }, []);
+    
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        // First verify authentication
+        await axios.get('https://constitution-ammendment-2p01.onrender.com/api/v1/auth/check', {
+          headers: { Authorization: sessionToken }
+        });
+        
+        // Then fetch amendments
+        const response = await axios.get('https://constitution-ammendment-2p01.onrender.com/api/v1/amendments', {
+          headers: { Authorization: sessionToken }
+        });
+        
+        setAmendments(response.data);
+      } catch (error) {
+        console.error('Fetch error:', error);
+        if (error.response?.status === 401) {
+          navigate('/');
+        } else {
+          setMessage({
+            text: 'Failed to load data. Please try again.',
+            type: 'error'
+          });
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    if (sessionToken) {
+      fetchData();
+    } else {
+      navigate('/');
+    }
+  }, [sessionToken, navigate]);
+
   const openVotingModal = (amendment) => {
     setSelectedAmendment(amendment);
     setChoice('');
