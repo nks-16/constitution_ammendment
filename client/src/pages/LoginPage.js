@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import logo from '../assets/nisb_white_logo.png';
+
 
 const LoginPage = () => {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -44,7 +44,7 @@ const LoginPage = () => {
         {/* Header with logo */}
         <div className="text-center mb-6 sm:mb-8">
           <div className="flex justify-center mb-4">
-            <img src={logo} alt="Logo" className="w-20 h-20 sm:w-24 sm:h-24 object-contain" />
+            <img src="/nisb_white_logo.png" alt="Logo" className="w-20 h-20 sm:w-24 sm:h-24 object-contain" />
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1 sm:mb-2 font-serif">Constitution Amendment Portal</h2>
           <p className="text-gray-600 text-xs sm:text-sm">Secure login for registered voters</p>

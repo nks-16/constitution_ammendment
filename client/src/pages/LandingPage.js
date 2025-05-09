@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import logo from '../assets/nisb_white_logo.png';
 
 const LandingPage = () => {
   return (
@@ -18,7 +17,7 @@ const LandingPage = () => {
           <div className="text-center mb-6">
             <div className="flex justify-center mb-4">
               <img 
-                src={logo} 
+                src="/nisb_white_logo.png"
                 alt="Portal Logo"
                 className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
               />
