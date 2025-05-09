@@ -39,6 +39,26 @@ const VotingPage = () => {
       console.error('Failed to fetch vote statuses', error);
     }
   };
+  const fetchVoteStatusForAmendment = async (amendmentId) => {
+  try {
+    const res = await axios.get(
+      `https://constitution-ammendment-2p01.onrender.com/api/v1/vote/${amendmentId}/has-voted`,
+      { headers: { Authorization: sessionToken } }
+    );
+
+    // Update the specific amendment in the array
+    setAmendments((prev) =>
+      prev.map((amendment) =>
+        amendment._id === amendmentId
+          ? { ...amendment, voted: res.data.hasVoted, voteInfo: res.data.vote }
+          : amendment
+      )
+    );
+  } catch (err) {
+    console.error('Failed to fetch vote status for amendment', err);
+  }
+};
+
   useEffect(() => {
     const fetchAmendments = async () => {
       try {
@@ -538,38 +558,37 @@ const VotingPage = () => {
                     <span className="text-lg font-medium" style={{ color: '#05445E' }}>No: {voteCounts.noVotes}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-4">
-                 {/* Vote Result Bar */}
-<div className="w-full max-w-md h-4 rounded-full overflow-hidden flex mt-4 shadow-inner bg-gray-200">
-  {/* YES Votes */}
-  <div
-    className="h-full transition-all duration-500"
-    style={{
-      backgroundColor:
-        voteCounts.yesVotes >= voteCounts.noVotes ? '#05445E' : '#D4E9F7',
-      width: `${
-        voteCounts.yesVotes + voteCounts.noVotes > 0
-          ? (voteCounts.yesVotes / (voteCounts.yesVotes + voteCounts.noVotes)) * 100
-          : 0
-      }%`,
-    }}
-  ></div>
-
-  {/* NO Votes */}
-  <div
-    className="h-full transition-all duration-500"
-    style={{
-      backgroundColor:
-        voteCounts.noVotes > voteCounts.yesVotes ? '#05445E' : '#D4E9F7',
-      width: `${
-        voteCounts.yesVotes + voteCounts.noVotes > 0
-          ? (voteCounts.noVotes / (voteCounts.yesVotes + voteCounts.noVotes)) * 100
-          : 0
-      }%`,
-    }}
-  ></div>
-</div>
-</div>
-
+                    <div 
+                      className="bg-gradient-to-r from-green-500 to-red-500 h-4 rounded-full" 
+                      style={{ 
+                        width: `${voteCounts.yesVotes + voteCounts.noVotes > 0 
+                          ? (voteCounts.yesVotes / (voteCounts.yesVotes + voteCounts.noVotes)) * 100 
+                          : 0}%` 
+                      }}
+                    ></div>
+                    <div className="w-full bg-gray-200 rounded-full h-4">
+                        <div 
+                          className="bg-gradient-to-r from-green-500 to-red-500 h-4 rounded-full" 
+                          style={{ 
+                            width: `${voteCounts.yesVotes + voteCounts.noVotes > 0 
+                              ? (voteCounts.yesVotes / (voteCounts.yesVotes + voteCounts.noVotes)) * 100 
+                              : 0}%` 
+                          }}
+                        ></div>
+                      </div>
+                      {/* ✅ Result */}
+                      <div className="mt-4 text-center">
+                        {(voteCounts.yesVotes + voteCounts.noVotes) > 0 ? (
+                          (voteCounts.yesVotes / (voteCounts.yesVotes + voteCounts.noVotes)) >= (2 / 3) ? (
+                            <p className="text-green-700 font-semibold text-lg">✅ Amendment Passed (≥ 2/3 Yes)</p>
+                          ) : (
+                            <p className="text-red-700 font-semibold text-lg">❌ Amendment Failed (&lt; 2/3 Yes)</p>
+                          )
+                        ) : (
+                          <p className="text-gray-600 italic">No votes recorded yet.</p>
+                        )}
+                      </div>
+                </div>
                 </div>
 
                 {adminControls && voteCounts.votes && (
