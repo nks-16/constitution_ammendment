@@ -7,7 +7,8 @@ const {
   toggleResultsVisibility,
   deleteVote,
   hasUserVoted,
-  markUserAsVoted
+  markUserAsVoted,
+  getUserVoteStatus
 } = require('../controllers/voteController');
 const protect = require('../middleware/authMiddleware');
 const router = express.Router();
@@ -20,5 +21,6 @@ router.put('/:amendmentId/toggle-voting', protect, toggleVotingStatus);
 router.put('/:amendmentId/toggle-results', protect, toggleResultsVisibility);
 router.delete('/:voteId', protect, deleteVote);
 router.get('/:amendmentId/has-voted', protect, hasUserVoted);
+router.get('/status/:amendmentId', protect, getUserVoteStatus);
 
 module.exports = router;

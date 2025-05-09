@@ -3,11 +3,6 @@ const User = require('../models/User');
 const Amendment = require('../models/Amendment');
 const mongoose = require('mongoose');
 
-// In voteController.js
-// Modified submitVote to only count most recent vote
-// In voteController.js
-// In voteController.js
-// controllers/voteController.js
 exports.submitVote = async (req, res) => {
   const { amendmentId, choice } = req.body;
   
@@ -58,7 +53,15 @@ exports.submitVote = async (req, res) => {
       voteId: vote._id,
       amendmentId: amendmentId
     });
-
+    // Update user's vote status for this amendment
+    await User.findByIdAndUpdate(req.user._id, {
+      $addToSet: {
+        votes: {
+          amendmentId,
+          hasVoted: true
+        }
+      }
+    });
   } catch (err) {
     console.error('Vote submission error:', err);
     
@@ -185,6 +188,31 @@ exports.toggleResultsVisibility = async (req, res) => {
     });
   }
 };
+
+exports.getUserVoteStatus = async (req, res) => {
+  const { amendmentId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(amendmentId)) {
+    return res.status(400).json({ message: 'Invalid amendment ID' });
+  }
+
+  try {
+    // `req.user` is already populated by auth middleware
+    const voteEntry = req.user.votes.find(
+      (v) => v.amendmentId.toString() === amendmentId
+    );
+
+    return res.status(200).json({
+      amendmentId,
+      hasVoted: voteEntry ? voteEntry.hasVoted : false
+    });
+
+  } catch (err) {
+    console.error('Error checking vote status:', err);
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
 
 exports.deleteVote = async (req, res) => {
   const { voteId } = req.params;
