@@ -464,7 +464,7 @@ const VotingPage = () => {
                 className={`flex-1 min-w-[48%] text-xs py-1.5 px-3 rounded-md font-medium ${
                   !amendment.isVotingOpen || amendment.voted
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    : 'bg-[#189AB4] hover:bg-[#033649] text-white'
                 }`}
               >
                 {!amendment.isVotingOpen
