@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import nisbot from '../assets/nisbot.png'
 
 const VotingPage = () => {
   const [amendments, setAmendments] = useState([]);
@@ -269,20 +270,28 @@ const VotingPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-100 bg-opacity-90 bg-[url('https://images.unsplash.com/photo-1579403124614-197f69d8187b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center bg-no-repeat bg-fixed flex items-center justify-center">
-        <div className="bg-white p-6 sm:p-10 rounded-xl shadow-2xl w-full max-w-md mx-4 text-center border-t-8 border-blue-700">
-          <div className="flex justify-center mb-6">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-700"></div>
+      <div className="min-h-screen bg-gray-100 bg-opacity-90 bg-[url('https://images.unsplash.com/photo-1571321278340-39e4fe3c1f66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center bg-no-repeat bg-fixed flex items-center justify-center">
+        <div className="bg-white p-6 sm:p-10 rounded-xl shadow-2xl w-full max-w-md mx-4 flex items-center border-t-8 border-blue-700">
+          {/* Text Section */}
+          <div className="text-center flex-1">
+            <div className="flex justify-center mb-6">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-700"></div>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800">Loading Amendments</h3>
           </div>
-          <h3 className="text-xl font-semibold text-gray-800">Loading Amendments</h3>
+          
+          {/* Image Section */}
+          <div className="ml-4 w-24 h-24">
+            <img src={nisbot} alt="Loading" className="w-full h-full object-cover rounded-lg" />
+          </div>
         </div>
       </div>
     );
   }
+  
 
   return (
-    <div className="min-h-screen bg-gray-100 bg-opacity-90 bg-[url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center bg-no-repeat bg-fixed px-4 py-8 relative">
-      {/* Header with admin/user info */}
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 bg-opacity-90 bg-[url('https://images.unsplash.com/photo-1571321278340-39e4fe3c1f66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center bg-no-repeat bg-fixed">
       <div className="absolute top-4 right-4 flex items-center space-x-4">
         {adminControls && (
           <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
@@ -306,8 +315,8 @@ const VotingPage = () => {
       <div className="container mx-auto py-8">
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-3xl sm:text-4xl text-white font-bold mb-2 font-serif">Constitutional Amendments</h1>
-          <p className="text-white text-lg">Select an amendment to {adminControls ? 'manage' : 'vote on'}</p>
+          <h1 className="text-3xl sm:text-4xl text-black font-bold mb-2 font-serif">Constitutional Amendments</h1>
+          <p className="text-black text-lg">Select an amendment to {adminControls ? 'manage' : 'vote on'}</p>
         </div>
 
         {/* Message display */}
@@ -336,110 +345,94 @@ const VotingPage = () => {
           </div>
         )}
 
-        {/* Amendments Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-          {amendments.map(amendment => (
-            <div 
-              key={amendment._id} 
-              className="bg-white rounded-lg shadow-md overflow-hidden border-t-4 border-blue-500 hover:shadow-lg transition-shadow relative"
-            >
-              {amendment.isVotingOpen && (
-                <div className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                  OPEN
-                </div>
-              )}
-              {amendment.showResults && (
-                <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                  RESULTS VISIBLE
-                </div>
-              )}
-              
-              <div className="p-5 h-full flex flex-col">
-                <div className="flex-grow">
-                  <h3 className="text-xl font-bold text-blue-700 mb-3">{amendment.title}</h3>
-                  {/* <p className="text-sm text-gray-600 mb-4 line-clamp-3">{amendment.description}</p> */}
-                  
-                  {amendment.showResults && (
-                    <div className="mt-4">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-green-600">Yes: {amendment.yesVotes}</span>
-                        <span className="text-red-600">No: {amendment.noVotes}</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-gradient-to-r from-green-500 to-red-500 h-2 rounded-full" 
-                          style={{ 
-                            width: `${amendment.yesVotes + amendment.noVotes > 0 
-                              ? (amendment.yesVotes / (amendment.yesVotes + amendment.noVotes)) * 100 
-                              : 0}%` 
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="space-y-2 mt-4">
-                  {adminControls ? (
-                    <>
-                      
-                      <button
-                            onClick={() => {
-                              if (!amendment.voted) openVotingModal(amendment);
-                            }}
-                            disabled={!amendment.isVotingOpen || amendment.voted}
-                            className={`w-full py-2 px-4 rounded-md font-medium ${
-                              !amendment.isVotingOpen || amendment.voted
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-blue-600 hover:bg-blue-700 text-white'
-                            }`}
-                          >
-                            {!amendment.isVotingOpen
-                              ? 'Voting Closed'
-                              : amendment.voted
-                              ? 'Already Voted'
-                              : 'Vote'}
-                      </button>
-
-                      <button
-                        onClick={() => openResultsModal(amendment)}
-                        className="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white rounded-md font-medium"
-                      >
-                        View Votes
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                            onClick={() => openVotingModal(amendment)}
-                            disabled={!amendment.isVotingOpen || amendment.hasUserVoted}
-                            className={`w-full py-2 px-4 rounded-md font-medium ${
-                              !amendment.isVotingOpen || amendment.hasUserVoted
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-blue-600 hover:bg-blue-700 text-white'
-                            }`}
-                          >
-                            {!amendment.isVotingOpen
-                              ? 'Voting Closed'
-                              : amendment.hasUserVoted
-                              ? 'Already Voted'
-                              : 'Vote'}
-                        </button>
-                      {amendment.showResults && (
-                        <button
-                          onClick={() => openResultsModal(amendment)}
-                          className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium"
-                        >
-                          View Results
-                        </button>
-                      )}
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
+{/*amendment grid*/}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 relative p-8">
+  {amendments.map(amendment => (
+    <div 
+      key={amendment._id} 
+      className="bg-white rounded-lg shadow-sm overflow-hidden border-t-4 border-blue-500 hover:shadow-md transition-shadow relative p-2"
+    >
+      {/* Status Badges */}
+      {amendment.isVotingOpen && (
+        <div className="absolute top-2 right-2 bg-green-100 text-green-700 text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full border border-green-300 shadow-sm">
+          OPEN
         </div>
+      )}
+   
+
+      {/* Card Content */}
+      <div className="flex flex-col h-full">
+        <div className="flex-grow">
+          <h3 className="text-base sm:text-lg font-bold text-blue-700 mb-2">
+            {amendment.title}
+          </h3>
+
+     
+        </div>
+
+        {/* Action Buttons */}
+        <div className="mt-4 flex gap-2 flex-wrap">
+          {adminControls ? (
+            <>
+              <button
+                onClick={() => {
+                  if (!amendment.voted) openVotingModal(amendment);
+                }}
+                disabled={!amendment.isVotingOpen || amendment.voted}
+                className={`flex-1 min-w-[48%] text-xs py-1.5 px-3 rounded-md font-medium ${
+                  !amendment.isVotingOpen || amendment.voted
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }`}
+              >
+                {!amendment.isVotingOpen
+                  ? 'Voting Closed'
+                  : amendment.voted
+                  ? 'Already Voted'
+                  : 'Vote'}
+              </button>
+
+              <button
+                onClick={() => openResultsModal(amendment)}
+                className="flex-1 min-w-[48%] text-xs py-1.5 px-3 bg-purple-600 hover:bg-purple-700 text-white rounded-md font-medium"
+              >
+                View Votes
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => openVotingModal(amendment)}
+                disabled={!amendment.isVotingOpen || amendment.hasUserVoted}
+                className={`flex-1 min-w-[48%] text-xs py-1.5 px-3 rounded-md font-medium ${
+                  !amendment.isVotingOpen || amendment.hasUserVoted
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }`}
+              >
+                {!amendment.isVotingOpen
+                  ? 'Voting Closed'
+                  : amendment.hasUserVoted
+                  ? 'Already Voted'
+                  : 'Vote'}
+              </button>
+
+              {amendment.showResults && (
+                <button
+                  onClick={() => openResultsModal(amendment)}
+                  className="flex-1 min-w-[48%] text-xs py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium"
+                >
+                  View Results
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
 
         {/* Voting Modal */}
         {showVotingModal && selectedAmendment && (
