@@ -34,11 +34,21 @@ const VotingPage = () => {
     );
 
     console.log('Updated amendments:', amendments);
+    localStorage.setItem('amendments', JSON.stringify(amendments));
   } catch (err) {
     console.error('Failed to fetch vote status for amendment', err);
   }
 };
 
+  useEffect(() => {
+  const localData = localStorage.getItem('amendments');
+  if (localData) {
+    setAmendments(JSON.parse(localData));
+  } else {
+    // Fallback to fetch from API if localStorage is empty
+    fetchAmendmentsFromServer();
+  }
+}, []);
 
   const fetchVoteStatuses = async (amendments) => {
     try {
