@@ -13,9 +13,9 @@ const app = express();
 
 // Restrict CORS to specific frontend domain
 app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true,
+  origin: '*', // ⚠️ Not for production
 }));
+
 
 app.use(express.json());
 
