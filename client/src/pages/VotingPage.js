@@ -47,7 +47,7 @@ const VotingPage = () => {
           { headers: { Authorization: sessionToken } }
         );
   
-        setAmendments(res.data.amendments);
+        setAmendments(res.data);
         console.log(amendments);
       } catch (error) {
         console.error('Failed to fetch amendments', error);
