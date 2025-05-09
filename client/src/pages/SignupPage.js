@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import logo from '../assets/nisb_white_logo.png';
+
 
 const SignupPage = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
@@ -35,7 +35,7 @@ const SignupPage = () => {
         <div className="text-center mb-6 sm:mb-8">
           <div className="flex justify-center mb-4">
             {/* Local Logo Image */}
-            <img src={logo} alt="Logo" className="w-20 h-20 sm:w-24 sm:h-24 object-contain" />
+            <img src="/nisb_white_logo.png" alt="Logo" className="w-20 h-20 sm:w-24 sm:h-24 object-contain" />
           </div>
           <h2 className="text-3xl font-bold text-gray-800 font-serif">Voter Registration</h2>
           <p className="text-gray-600 text-sm">Apply for constitutional voting access</p>

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import nisbot from '../assets/nisbot.png'
+
 
 const VotingPage = () => {
   const [amendments, setAmendments] = useState([]);
@@ -270,18 +270,22 @@ const VotingPage = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-100 bg-opacity-90 bg-[url('https://images.unsplash.com/photo-1571321278340-39e4fe3c1f66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')] bg-cover bg-center bg-no-repeat bg-fixed flex items-center justify-center">
-        <div className="bg-white p-6 sm:p-10 rounded-xl shadow-2xl w-full max-w-md mx-4 flex items-center border-t-8 border-blue-700">
+       <div
+          className="bg-white p-6 sm:p-10 rounded-xl shadow-2xl w-full max-w-md mx-4 flex items-center border-t-8"
+            style={{ borderTopColor: '#189AB4' }}
+        >
+
           {/* Text Section */}
           <div className="text-center flex-1">
             <div className="flex justify-center mb-6">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-700"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2" style={{ borderTopColor: '#05445E' }}></div>
             </div>
             <h3 className="text-xl font-semibold text-gray-800">Loading Amendments</h3>
           </div>
           
           {/* Image Section */}
           <div className="ml-4 w-24 h-24">
-            <img src={nisbot} alt="Loading" className="w-full h-full object-cover rounded-lg" />
+            <img src="/busy_nisbot.png" alt="Loading" className="w-full h-full object-cover rounded-lg" />
           </div>
         </div>
       </div>
@@ -314,13 +318,12 @@ const VotingPage = () => {
       <div className="container mx-auto py-8">
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-3xl sm:text-4xl text-black font-bold mb-2 font-serif">Constitutional Amendments</h1>
-          <p className="text-black text-lg">Select an amendment to {adminControls ? 'manage' : 'vote on'}</p>
+          <h1 className=" absolute text-3xl sm:text-4xl text-black font-bold mb-2 mt-5  my-15 font-serif">Constitution Amendments</h1>
         </div>
 
         {/* Message display */}
         {message.text && (
-          <div className={`mb-8 p-4 rounded-lg border-l-4 ${
+          <div className={`absolute mb-8 p-4 rounded-lg border-l-4 ${
             message.type === 'success' ? 'bg-green-50 border-green-500' :
             message.type === 'error' ? 'bg-red-50 border-red-500' :
             'bg-blue-50 border-blue-500'
@@ -349,7 +352,7 @@ const VotingPage = () => {
   {amendments.map(amendment => (
     <div 
       key={amendment._id} 
-      className="bg-white rounded-lg shadow-sm overflow-hidden border-t-4 border-blue-500 hover:shadow-md transition-shadow relative p-2"
+      className="bg-white rounded-lg shadow-sm overflow-hidden border-t-4 hover:shadow-md transition-shadow relative p-2" style={{ borderTopColor: '#189AB4' }}
     >
       {/* Status Badges */}
       {amendment.isVotingOpen && (
@@ -362,11 +365,9 @@ const VotingPage = () => {
       {/* Card Content */}
       <div className="flex flex-col h-full">
         <div className="flex-grow">
-          <h3 className="text-base sm:text-lg font-bold text-blue-700 mb-2">
+          <h3 className="text-base sm:text-lg font-bold text-blue-700 mb-2" style={{color: '#05445E'}}>
             {amendment.title}
           </h3>
-
-     
         </div>
 
         {/* Action Buttons */}
@@ -509,7 +510,7 @@ const VotingPage = () => {
         {/* Results Modal */}
         {showResultsModal && voteCounts && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl border-t-8 border-blue-700">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl border-t-8 " style={{ borderTopColor: '#189AB4' }}>
               <div className="p-6 sm:p-8">
                 <div className="flex justify-between items-start mb-6">
                   <h2 className="text-2xl font-bold text-gray-800">{voteCounts.amendmentTitle} Results</h2>
@@ -525,19 +526,44 @@ const VotingPage = () => {
 
                 <div className="mb-6">
                   <div className="flex justify-between mb-2">
-                    <span className="text-lg font-medium text-green-600">Yes Votes: {voteCounts.yesVotes}</span>
-                    <span className="text-lg font-medium text-red-600">No Votes: {voteCounts.noVotes}</span>
+                    <span className="text-lg font-medium" style={{ color: '#05445E' }}>
+                      Yes: {voteCounts.yesVotes}
+                    </span>
+                    <span className="text-lg font-medium" style={{ color: '#05445E' }}>No: {voteCounts.noVotes}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-4">
-                    <div 
-                      className="bg-gradient-to-r from-green-500 to-red-500 h-4 rounded-full" 
-                      style={{ 
-                        width: `${voteCounts.yesVotes + voteCounts.noVotes > 0 
-                          ? (voteCounts.yesVotes / (voteCounts.yesVotes + voteCounts.noVotes)) * 100 
-                          : 0}%` 
-                      }}
-                    ></div>
-                  </div>
+                 {/* Vote Result Bar */}
+<div className="w-full max-w-md h-4 rounded-full overflow-hidden flex mt-4 shadow-inner bg-gray-200">
+  {/* YES Votes */}
+  <div
+    className="h-full transition-all duration-500"
+    style={{
+      backgroundColor:
+        voteCounts.yesVotes >= voteCounts.noVotes ? '#05445E' : '#D4E9F7',
+      width: `${
+        voteCounts.yesVotes + voteCounts.noVotes > 0
+          ? (voteCounts.yesVotes / (voteCounts.yesVotes + voteCounts.noVotes)) * 100
+          : 0
+      }%`,
+    }}
+  ></div>
+
+  {/* NO Votes */}
+  <div
+    className="h-full transition-all duration-500"
+    style={{
+      backgroundColor:
+        voteCounts.noVotes > voteCounts.yesVotes ? '#05445E' : '#D4E9F7',
+      width: `${
+        voteCounts.yesVotes + voteCounts.noVotes > 0
+          ? (voteCounts.noVotes / (voteCounts.yesVotes + voteCounts.noVotes)) * 100
+          : 0
+      }%`,
+    }}
+  ></div>
+</div>
+</div>
+
                 </div>
 
                 {adminControls && voteCounts.votes && (
