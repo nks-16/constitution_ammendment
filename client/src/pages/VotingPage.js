@@ -219,13 +219,7 @@ const VotingPage = () => {
   if (!choice || !selectedAmendment) return;
   
   try {
-    const response = await axios.post(
-      'https://constitution-ammendment-2p01.onrender.com/api/v1/vote',
-      { amendmentId: selectedAmendment._id, choice },
-      { headers: { Authorization: sessionToken } }
-    );
-
-    // Update local state
+    // Optimistically update the UI immediately
     setAmendments(prev => prev.map(amendment => 
       amendment._id === selectedAmendment._id 
         ? { 
@@ -238,28 +232,74 @@ const VotingPage = () => {
         : amendment
     ));
 
+    // Make the API call
+    const response = await axios.post(
+      'https://constitution-ammendment-2p01.onrender.com/api/v1/vote',
+      { amendmentId: selectedAmendment._id, choice },
+      { headers: { Authorization: sessionToken } }
+    );
+
+    // Show success message
     setMessage({ 
-      text: `Your vote for ${selectedAmendment.title} has been recorded`, 
+      text: `Your vote for "${selectedAmendment.title}" has been recorded`, 
       type: 'success' 
     });
+
+    // Auto-dismiss message after 5 seconds
+    const timer = setTimeout(() => {
+      setMessage({ text: '', type: '' });
+    }, 5000);
+
+    // Close the voting modal
     closeVotingModal();
+
+    // Return cleanup function for the timeout
+    return () => clearTimeout(timer);
+    
   } catch (error) {
     console.error('Voting error:', error);
-    let errorMessage = error.response?.data?.message || 
-                      `Failed to submit vote for ${selectedAmendment.title}`;
     
-    if (error.response?.status === 400) {
-      if (error.response.data.message.includes('already voted')) {
-        errorMessage = "You've already voted on this amendment";
+    // Revert optimistic update on error
+    setAmendments(prev => prev.map(amendment => 
+      amendment._id === selectedAmendment._id 
+        ? { 
+            ...amendment, 
+            hasVoted: amendment.hasVoted, // Keep original value
+            userVote: amendment.userVote, // Keep original value
+            yesVotes: amendment.yesVotes, // Revert count
+            noVotes: amendment.noVotes   // Revert count
+          } 
+        : amendment
+    ));
+
+    // Determine error message
+    let errorMessage;
+    if (error.response) {
+      if (error.response.status === 400) {
+        errorMessage = error.response.data.message.includes('already voted')
+          ? "You've already voted on this amendment"
+          : "Voting is currently closed for this amendment";
+      } else if (error.response.status === 401) {
+        errorMessage = "Please login again to vote";
+        navigate('/');
       } else {
-        errorMessage = "Voting is currently closed for this amendment";
+        errorMessage = `Failed to submit vote: ${error.response.data.message}`;
       }
+    } else {
+      errorMessage = "Network error - please check your connection";
     }
 
     setMessage({ 
       text: errorMessage, 
       type: 'error' 
     });
+
+    // Auto-dismiss error message after 5 seconds
+    const errorTimer = setTimeout(() => {
+      setMessage({ text: '', type: '' });
+    }, 5000);
+
+    return () => clearTimeout(errorTimer);
   }
 };
   const toggleVotingStatus = async (amendmentId, isVotingOpen) => {
@@ -381,30 +421,42 @@ const VotingPage = () => {
         </div>
 
         {/* Message display */}
-        {message.text && (
-          <div className={`absolute mb-8 p-4 rounded-lg border-l-4 ${
-            message.type === 'success' ? 'bg-green-50 border-green-500' :
-            message.type === 'error' ? 'bg-red-50 border-red-500' :
-            'bg-blue-50 border-blue-500'
-          }`}>
-            <div className="flex items-center">
-              <svg className={`w-5 h-5 mr-2 ${
-                message.type === 'success' ? 'text-green-600' :
-                message.type === 'error' ? 'text-red-600' : 'text-blue-600'
-              }`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                {message.type === 'success' ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                )}
-              </svg>
-              <span className={`
-                ${message.type === 'success' ? 'text-green-700' :
-                message.type === 'error' ? 'text-red-700' : 'text-blue-700'}
-              `}>{message.text}</span>
-            </div>
-          </div>
-        )}
+       {message.text && (
+  <div 
+    className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ease-in-out ${
+      message.type === 'success' ? 'bg-green-50 border-green-500' :
+      message.type === 'error' ? 'bg-red-50 border-red-500' :
+      'bg-blue-50 border-blue-500'
+    } rounded-lg border-l-4 shadow-lg max-w-md w-full`}
+  >
+    <div className="flex items-center justify-between p-4">
+      <div className="flex items-center">
+        <svg className={`w-5 h-5 mr-2 ${
+          message.type === 'success' ? 'text-green-600' :
+          message.type === 'error' ? 'text-red-600' : 'text-blue-600'
+        }`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          {message.type === 'success' ? (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          ) : (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          )}
+        </svg>
+        <span className={`
+          ${message.type === 'success' ? 'text-green-700' :
+          message.type === 'error' ? 'text-red-700' : 'text-blue-700'}
+        `}>{message.text}</span>
+      </div>
+      <button 
+        onClick={() => setMessage({ text: '', type: '' })}
+        className="text-gray-500 hover:text-gray-700 ml-4"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+)}
 
 {/*amendment grid*/}
 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 relative p-8">
