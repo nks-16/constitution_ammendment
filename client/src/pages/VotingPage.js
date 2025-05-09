@@ -45,8 +45,6 @@ const VotingPage = () => {
   if (localData) {
     setAmendments(JSON.parse(localData));
   } else {
-    // Fallback to fetch from API if localStorage is empty
-    fetchAmendmentsFromServer();
   }
 }, []);
 
