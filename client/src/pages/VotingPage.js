@@ -440,16 +440,16 @@ const VotingPage = () => {
             <>
               <button
                 onClick={() => openVotingModal(amendment)}
-                disabled={!amendment.isVotingOpen || amendment.hasUserVoted}
+                disabled={!amendment.isVotingOpen || amendment.voted}
                 className={`flex-1 min-w-[48%] text-xs py-1.5 px-3 rounded-md font-medium ${
-                  !amendment.isVotingOpen || amendment.hasUserVoted
+                  !amendment.isVotingOpen || amendment.voted
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     : 'bg-blue-600 hover:bg-blue-700 text-white'
                 }`}
               >
                 {!amendment.isVotingOpen
                   ? 'Voting Closed'
-                  : amendment.hasUserVoted
+                  : amendment.voted
                   ? 'Already Voted'
                   : 'Vote'}
               </button>
