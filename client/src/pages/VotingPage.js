@@ -39,23 +39,6 @@ const VotingPage = () => {
       console.error('Failed to fetch vote statuses', error);
     }
   };
-  useEffect(() => {
-    const fetchAmendments = async () => {
-      try {
-        const res = await axios.get(
-          `https://constitution-ammendment-2p01.onrender.com/api/v1/amendments`,
-          { headers: { Authorization: sessionToken } }
-        );
-  
-        const amendments = res.data.amendments;
-        await fetchVoteStatuses(amendments);
-      } catch (error) {
-        console.error('Failed to fetch amendments', error);
-      }
-    };
-  
-    fetchAmendments();
-  }, []);
     
   useEffect(() => {
     const fetchData = async () => {
@@ -72,6 +55,7 @@ const VotingPage = () => {
         });
         
         setAmendments(response.data);
+        await fetchVoteStatuses(amendments);
       } catch (error) {
         console.error('Fetch error:', error);
         if (error.response?.status === 401) {
