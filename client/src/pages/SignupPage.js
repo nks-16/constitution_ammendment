@@ -67,7 +67,7 @@ const SignupPage = () => {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Legal Name</label>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
             <input
               id="name"
               type="text"
@@ -79,7 +79,7 @@ const SignupPage = () => {
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Official Email</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
               id="email"
               type="email"
@@ -114,12 +114,9 @@ const SignupPage = () => {
         <div className="mt-6 text-center text-sm text-gray-600">
           <p>
             Already have voting access?{' '}
-            <Link to="/" className="text-blue-700 hover:underline font-medium">
+            <Link to="/login" className="text-blue-700 hover:underline font-medium">
               Login to your account
             </Link>
-          </p>
-          <p className="mt-3 text-xs text-gray-500">
-            By registering, you agree to constitutional voting terms and verification.
           </p>
         </div>
       </div>

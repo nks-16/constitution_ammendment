@@ -36,7 +36,7 @@ const LandingPage = () => {
           {/* CTA Section */}
           <div className="text-center">
             <p className="text-gray-600 mb-5 text-sm">
-            Amend what must be, preserve what should be, shape what could be.
+            Amend what must be, Preserve what should be, Shape what could be.
             </p>
             <Link 
               to="/login" 
@@ -52,7 +52,7 @@ const LandingPage = () => {
 
         {/* Footer */}
         <div className="mt-6 text-center text-gray-500 text-xs">
-          <p>© {new Date().getFullYear()} Constitutional Amendments Portal. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} NISB Constitution Amendments Portal. All rights reserved.</p>
         </div>
       </div>
     </div>

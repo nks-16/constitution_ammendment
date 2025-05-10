@@ -76,7 +76,7 @@ const LoginPage = () => {
         {/* Login form */}
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Official Email</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <svg className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -87,7 +87,7 @@ const LoginPage = () => {
               <input
                 id="email"
                 type="email"
-                placeholder="your.email@government.org"
+                placeholder="Your email"
                 required
                 className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -127,14 +127,11 @@ const LoginPage = () => {
 
         <div className="mt-6 sm:mt-8 text-center">
           <p className="text-gray-600 text-xs sm:text-sm">
-            Not registered for constitutional voting?{' '}
+            Not registered for voting?{' '}
             <Link to="/signup" className="text-blue-700 hover:underline font-medium">
               Request voting access
             </Link>
           </p>
-          <div className="mt-3 sm:mt-4 text-xs text-gray-500">
-            <p>By logging in, you agree to our constitutional voting terms</p>
-          </div>
         </div>
       </div>
     </div>
